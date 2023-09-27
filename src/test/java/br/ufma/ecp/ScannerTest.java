@@ -23,6 +23,15 @@ public class ScannerTest extends TestSupport {
             System.out.println(tk);
         }
     }
+
+    @Test
+    public void testPalavrasReservadas () {
+        String input = "45  variavel while class int if else null static";
+        Scanner scan = new Scanner (input.getBytes());
+        for (Token tk = scan.nextToken(); tk.type != TokenType.EOF; tk = scan.nextToken()) {
+            System.out.println(tk);
+        }
+    }
     
     @Test
     public void testScannerWithSquareGame() throws IOException {

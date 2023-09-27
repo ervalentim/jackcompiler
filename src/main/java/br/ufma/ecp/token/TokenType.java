@@ -20,6 +20,11 @@ public enum TokenType {
      IF,
      CLASS,
      CONSTRUCTOR,
+     FUNCTION,
+     FIELD,STATIC,VAR,INT,
+     CHAR,BOOLEAN,VOID,TRUE,FALSE,
+     NULL,THIS,LET,DO,ELSE, RETURN,
+ 
 
      EOF,
 
