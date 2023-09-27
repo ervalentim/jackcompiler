@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public enum TokenType {
-    PLUS,MINUS,
+    PLUS,MINUS, SLASH,
 
      // Literals.
      NUMBER,
