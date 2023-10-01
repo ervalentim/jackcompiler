@@ -24,13 +24,26 @@ public enum TokenType {
      FIELD,STATIC,VAR,INT,
      CHAR,BOOLEAN,VOID,TRUE,FALSE,
      NULL,THIS,LET,DO,ELSE, RETURN,
+
+      // symbols
+    LPAREN,RPAREN,
+    LBRACE, RBRACE,
+    LBRACKET,RBRACKET,
+
+    COMMA, SEMICOLON, DOT,
+  
+    ASTERISK,
+
+    AND, OR, NOT,
+
+    LT, GT, EQ,
  
 
      EOF,
 
      ILLEGAL;
 
-     static public boolean isSymbol (char c) {
+    static public boolean isSymbol (char c) {
         String symbols = "{}()[].,;+-*/&|<>=~";
         return symbols.indexOf(c) > -1;
     }
