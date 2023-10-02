@@ -105,6 +105,10 @@ public class Scanner {
         start = current;
         char ch = peek();
 
+        if (ch == '\0') {
+            return new Token(TokenType.EOF, "", line);
+        }
+        
         if (isAlpha(ch)) {
             return identifier();
         }
@@ -113,9 +117,6 @@ public class Scanner {
             advance();
             return new Token (TokenType.NUMBER, Character.toString(ch), line);
         }  else if (Character.isDigit(ch))
-            return number();
-            
-        else if (Character.isDigit(ch))
             return number();
 
         switch (ch) {
@@ -227,6 +228,9 @@ public class Scanner {
     }
 
     private void advance()  {
+        // if (current < input.length) {
+        //     current++;
+        // }
         char ch = peek();
         if (ch != 0) {
             current++;

@@ -56,7 +56,10 @@ public enum TokenType {
                 WHILE,
                 IF,
                 CLASS,
-                CONSTRUCTOR
+                CONSTRUCTOR,FUNCTION,
+     FIELD,STATIC,VAR,INT,
+     CHAR,BOOLEAN,VOID,TRUE,FALSE,
+     NULL,THIS,LET,DO,ELSE, RETURN
             );
             return keywords.contains(type);
     }

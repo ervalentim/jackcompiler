@@ -48,15 +48,21 @@ public class App {
                     }
                 }
                 """;
+
         Scanner scan = new Scanner(input.getBytes());
-        System.out.println("<tokens>");
+        System.out.println("<tokens>");        
         for (Token tk = scan.nextToken(); tk.type != EOF; tk = scan.nextToken()) {
-            // Ignore tokens with empty lexemes
-            if (!tk.lexeme.trim().isEmpty()) {
-                System.out.println(tk);
-            }
-        }
-        System.out.println("</tokens>");
+         System.out.println(tk);
+ }
+         System.out.println("</tokens>");
+        // System.out.println("<tokens>");
+        // for (Token tk = scan.nextToken(); tk.type != EOF; tk = scan.nextToken()) {
+        //     // Ignore tokens with empty lexemes
+        //     if (!tk.lexeme.trim().isEmpty()) {
+        //         System.out.println(tk);
+        //     }
+        // }
+        // System.out.println("</tokens>");
 
     }
 }
