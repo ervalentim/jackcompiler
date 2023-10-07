@@ -139,6 +139,31 @@ public class ParserTest extends TestSupport {
         assertEquals(expectedResult, result);
     }
 
+    @Test
+    public void testParseReturnStatement() {
+        String input = """
+            return 42;
+            """;
+        Parser parser = new Parser(input.getBytes(StandardCharsets.UTF_8));
+        parser.parseReturn();
+        String expectedOutput = """
+            <returnStatement>
+                <keyword> return </keyword>
+                <expression>
+                    <term>
+                        <integerConstant> 42 </integerConstant>
+                    </term>
+                </expression>
+                <symbol> ; </symbol>
+            </returnStatement>
+            """;
+
+        String result = parser.XMLOutput().replaceAll("\\s", "");
+        expectedOutput = expectedOutput.replaceAll("\\s", "");
+
+        assertEquals(expectedOutput, result);
+    }
+
     
     @Test
     public void testParseLetSimple1() {
