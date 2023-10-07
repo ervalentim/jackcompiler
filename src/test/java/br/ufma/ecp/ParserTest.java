@@ -92,6 +92,53 @@ public class ParserTest extends TestSupport {
           assertEquals(expectedResult, result);    
 
     }
+
+    @Test
+    public void testParseExpressionList() {
+        // Entrada de teste contendo uma lista de expressões separadas por vírgulas
+        var input = "x + y, 10, 5+3;";
+        var parser = new Parser(input.getBytes(StandardCharsets.UTF_8));
+
+        // Chamando o método para analisar a lista de expressões
+        parser.parseExpressionList();
+
+        // Resultado esperado em formato XML
+        var expectedResult = """
+            <expressionList>
+                <expression>
+                    <term>
+                        <identifier> x </identifier>
+                    </term>
+                    <symbol> + </symbol>
+                    <term>
+                        <identifier> y </identifier>
+                    </term>
+                </expression>
+                <symbol> , </symbol>
+                <expression>
+                    <term>
+                        <integerConstant> 10 </integerConstant>
+                    </term>
+                </expression>
+                <symbol> , </symbol>
+                <expression>
+                    <term>
+                        <integerConstant> 5 </integerConstant>
+                    </term>
+                    <symbol> + </symbol>
+                    <term>
+                        <integerConstant> 3 </integerConstant>
+                    </term>
+                </expression>
+            </expressionList>
+            """.replaceAll("\r", "").replaceAll("  ", "");
+
+        var result = parser.XMLOutput();
+        result = result.replaceAll("\r", "").replaceAll("  ", "");
+
+        assertEquals(expectedResult, result);
+    }
+
     
     @Test
     public void testParseLetSimple1() {
@@ -173,6 +220,7 @@ public class ParserTest extends TestSupport {
       </letStatement>
       """;
         var result = parser.XMLOutput();
+        System.out.println(parser.XMLOutput());
         expectedResult = expectedResult.replaceAll("  ", "");
         result = result.replaceAll("\r", ""); // no codigo em linux não tem o retorno de carro
         assertEquals(expectedResult, result);
