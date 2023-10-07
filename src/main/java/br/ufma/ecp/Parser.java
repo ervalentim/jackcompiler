@@ -4,61 +4,84 @@ import br.ufma.ecp.token.Token;
 import br.ufma.ecp.token.TokenType;
 
 public class Parser {
+
+   private static class ParseError extends RuntimeException {}
+
     private Scanner scan;
     private Token currentToken;
-    
-    public Parser (byte[] input) {
+    private Token peekToken;
+    private StringBuilder xmlOutput = new StringBuilder();
+
+    public Parser(byte[] input) {
         scan = new Scanner(input);
-        currentToken = scan.nextToken();
+        nextToken();
+    }
+
+    private void nextToken() {
+        currentToken = peekToken;
+        peekToken = scan.nextToken();
+    }
+
+
+   public void parse () {
         
     }
 
-    public void parse () {
-        expr();
+    // funções auxiliares
+    public String XMLOutput() {
+        return xmlOutput.toString();
     }
 
-    void expr() {
-        number();
-        oper();
+    private void printNonTerminal(String nterminal) {
+        xmlOutput.append(String.format("<%s>\r\n", nterminal));
     }
 
-    void number () {
-        System.out.println(currentToken.lexeme);
-        match(TokenType.NUMBER);
+
+    boolean peekTokenIs(TokenType type) {
+        return peekToken.type == type;
     }
 
-    private void nextToken () {
-        currentToken = scan.nextToken();
+    boolean currentTokenIs(TokenType type) {
+        return currentToken.type == type;
     }
 
-   private void match(TokenType t) {
-        if (currentToken.type == t) {
+    private void expectPeek(TokenType... types) {
+        for (TokenType type : types) {
+            if (peekToken.type == type) {
+                expectPeek(type);
+                return;
+            }
+        }
+
+       throw error(peekToken, "Expected a statement");
+
+    }
+
+    private void expectPeek(TokenType type) {
+        if (peekToken.type == type) {
             nextToken();
-        }else {
-            throw new Error("syntax error");
-        }
-   }
-
-    void oper () {
-        if (currentToken.type == TokenType.PLUS) {
-            match(TokenType.PLUS);
-            number();
-            System.out.println("add");
-            oper();
-        } else if (currentToken.type == TokenType.MINUS) {
-            match(TokenType.MINUS);
-            number();
-            System.out.println("sub");
-            oper();
-        } else if (currentToken.type == TokenType.EOF) {
-            // vazio
+            xmlOutput.append(String.format("%s\r\n", currentToken.toString()));
         } else {
-            throw new Error("syntax error");
+            throw error(peekToken, "Expected "+type.name());
         }
     }
 
-    public String VMOutput() {
-        return "";
+
+    private static void report(int line, String where,
+        String message) {
+            System.err.println(
+            "[line " + line + "] Error" + where + ": " + message);
     }
+
+
+    private ParseError error(Token token, String message) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, " at end", message);
+        } else {
+            report(token.line, " at '" + token.lexeme + "'", message);
+        }
+        return new ParseError();
+    }
+
 
 }
