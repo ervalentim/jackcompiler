@@ -27,6 +27,17 @@ public class Parser {
         
     }
 
+    void parseReturn() {
+        printNonTerminal("returnStatement");
+        expectPeek(TokenType.RETURN);
+        if (!peekTokenIs(TokenType.SEMICOLON)) {
+            parseExpression();
+        } 
+        expectPeek(TokenType.SEMICOLON);
+
+        printNonTerminal("/returnStatement");
+    }
+
     void parseTerm() {
         printNonTerminal("term");
         switch (peekToken.type) {
