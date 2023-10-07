@@ -58,7 +58,7 @@ public class Parser {
         return "+-*/<>=~&|".contains(op);
    }
 
-   void parseExpression() {
+    void parseExpression() {
         printNonTerminal("expression");
         parseTerm ();
         while (isOperator(peekToken.lexeme)) {
@@ -66,6 +66,28 @@ public class Parser {
             parseTerm();
         }
         printNonTerminal("/expression");
+    }
+
+    int parseExpressionList() {
+        printNonTerminal("expressionList");
+
+        var nArgs = 0;
+
+        if (!peekTokenIs(TokenType.RPAREN)) // verifica se tem pelo menos uma expressao
+        {
+            parseExpression();
+            nArgs = 1;
+        }
+
+        // procurando as demais
+        while (peekTokenIs(TokenType.COMMA)) {
+            expectPeek(TokenType.COMMA);
+            parseExpression();
+            nArgs++;
+        }
+
+        printNonTerminal("/expressionList");
+        return nArgs;
     }
 
     void parseLet() {
