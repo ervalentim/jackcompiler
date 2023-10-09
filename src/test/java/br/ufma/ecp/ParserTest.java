@@ -164,6 +164,19 @@ public class ParserTest extends TestSupport {
         assertEquals(expectedOutput, result);
     }
 
+    @Test
+    public void testParseStatement() {
+        //teste para LET
+        String inputLet = "let x = 42;";
+        Parser parserLet = new Parser(inputLet.getBytes(StandardCharsets.UTF_8));
+        parserLet.parseStatement();
+
+        //teste para RETURN
+        String inputReturn = "return;";
+        Parser parserReturn = new Parser(inputReturn.getBytes(StandardCharsets.UTF_8));
+        parserReturn.parseStatement();
+    }
+
     
     @Test
     public void testParseLetSimple1() {

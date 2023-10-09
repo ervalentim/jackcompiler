@@ -27,6 +27,19 @@ public class Parser {
         
     }
 
+    void parseStatement() {
+        switch (peekToken.type) {
+            case LET:
+                parseLet();
+                break;
+            case RETURN:
+                parseReturn();
+                break;
+            default:
+                throw error(peekToken, "Expected a statement");
+        }
+    }
+
     void parseReturn() {
         printNonTerminal("returnStatement");
         expectPeek(TokenType.RETURN);
