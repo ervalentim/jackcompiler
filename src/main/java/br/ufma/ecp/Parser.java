@@ -27,6 +27,16 @@ public class Parser {
         
     }
 
+    void parseStatements() {
+        printNonTerminal("statements");
+        while ( peekToken.type == TokenType.LET ||
+                peekToken.type == TokenType.RETURN) {
+            parseStatement();
+        }
+
+        printNonTerminal("/statements");
+    }
+
     void parseStatement() {
         switch (peekToken.type) {
             case LET:
