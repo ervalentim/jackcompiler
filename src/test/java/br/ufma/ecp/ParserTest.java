@@ -177,6 +177,45 @@ public class ParserTest extends TestSupport {
         parserReturn.parseStatement();
     }
 
+
+    @Test
+    public void testParseStatements() {
+        String input = """
+            let x = 42;
+            return 42;
+            """;
+
+        Parser parser = new Parser(input.getBytes(StandardCharsets.UTF_8));
+        parser.parseStatements();
+        String expectedOutput = """
+            <statements>
+                <letStatement>
+                    <keyword> let </keyword>
+                    <identifier> x </identifier>
+                    <symbol> = </symbol>
+                    <expression>
+                      <term>
+                        <integerConstant> 42 </integerConstant>
+                      </term>
+                    </expression>
+                    <symbol> ; </symbol>
+                </letStatement>
+                <returnStatement>
+                    <keyword> return </keyword>
+                    <expression>
+                        <term>
+                            <integerConstant> 42 </integerConstant>
+                        </term>
+                    </expression>
+                    <symbol> ; </symbol>
+                </returnStatement>
+            </statements>
+            """.replaceAll("\\s", "");
+          
+        String result = parser.XMLOutput().replaceAll("\\s", "");
+        expectedOutput = expectedOutput.replaceAll("\\s", "");
+        assertEquals(expectedOutput, result);
+    }
     
     @Test
     public void testParseLetSimple1() {
