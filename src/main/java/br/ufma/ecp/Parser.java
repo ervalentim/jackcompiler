@@ -70,7 +70,8 @@ public class Parser {
         printNonTerminal("statements");
         while ( peekToken.type == TokenType.LET ||
                 peekToken.type == TokenType.RETURN ||
-                peekToken.type == TokenType.WHILE) {
+                peekToken.type == TokenType.WHILE ||
+                peekToken.type == TokenType.IF) {
             parseStatement();
         }
 
@@ -87,6 +88,9 @@ public class Parser {
                 break;
             case WHILE:
                 parseWhile();
+                break;
+            case IF:
+                parseIf();
                 break;
             default:
                 throw error(peekToken, "Expected a statement");
