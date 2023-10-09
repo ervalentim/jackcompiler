@@ -216,6 +216,53 @@ public class ParserTest extends TestSupport {
         expectedOutput = expectedOutput.replaceAll("\\s", "");
         assertEquals(expectedOutput, result);
     }
+
+    @Test
+    public void testParseWhileStatement() {
+        String input = """
+            while (x < 10) {
+                let x = 42;
+            }
+            """;
+        Parser parser = new Parser(input.getBytes(StandardCharsets.UTF_8));
+        parser.parseWhile();
+
+        String expectedOutput = """
+            <whileStatement>
+                <keyword> while </keyword>
+                <symbol> ( </symbol>
+                <expression>
+                    <term>
+                      <identifier> x </identifier>
+                    </term>
+                    <symbol> &lt; </symbol>
+                    <term>
+                        <integerConstant> 10 </integerConstant>
+                    </term>
+                </expression>
+                <symbol> ) </symbol>
+                <symbol> { </symbol>
+                <statements>
+                    <letStatement>
+                        <keyword> let </keyword>
+                        <identifier> x </identifier>
+                        <symbol> = </symbol>
+                        <expression>
+                          <term>
+                            <integerConstant> 42 </integerConstant>
+                          </term>
+                        </expression>
+                        <symbol> ; </symbol>
+                    </letStatement>
+                </statements>
+                <symbol> } </symbol>
+            </whileStatement>
+            """.replaceAll("\\s", "");
+
+        String result = parser.XMLOutput().replaceAll("\\s", "");
+        expectedOutput = expectedOutput.replaceAll("\\s", "");
+        assertEquals(expectedOutput, result);
+    }
     
     @Test
     public void testParseLetSimple1() {
