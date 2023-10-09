@@ -27,10 +27,24 @@ public class Parser {
         
     }
 
+    void parseWhile() {
+        printNonTerminal("whileStatement");
+        expectPeek(TokenType.WHILE);
+        expectPeek(TokenType.LPAREN);
+        parseExpression();
+        expectPeek(TokenType.RPAREN);
+        expectPeek(TokenType.LBRACE);
+        parseStatements();
+        expectPeek(TokenType.RBRACE);
+        printNonTerminal("/whileStatement");
+    }
+
+
     void parseStatements() {
         printNonTerminal("statements");
         while ( peekToken.type == TokenType.LET ||
-                peekToken.type == TokenType.RETURN) {
+                peekToken.type == TokenType.RETURN ||
+                peekToken.type == TokenType.WHILE) {
             parseStatement();
         }
 
@@ -44,6 +58,9 @@ public class Parser {
                 break;
             case RETURN:
                 parseReturn();
+                break;
+            case WHILE:
+                parseWhile();
                 break;
             default:
                 throw error(peekToken, "Expected a statement");
