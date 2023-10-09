@@ -27,6 +27,32 @@ public class Parser {
         
     }
 
+    void parseIf() {
+        printNonTerminal("ifStatement");
+    
+        expectPeek(TokenType.IF);
+        expectPeek(TokenType.LPAREN);
+        parseExpression();
+        expectPeek(TokenType.RPAREN);    
+        expectPeek(TokenType.LBRACE);
+        parseStatements();
+        expectPeek(TokenType.RBRACE);
+
+
+        if (peekTokenIs(TokenType.ELSE))
+        {
+            expectPeek(TokenType.ELSE);
+
+            expectPeek(TokenType.LBRACE);
+
+            parseStatements();
+
+            expectPeek(TokenType.RBRACE);
+        }
+
+        printNonTerminal("/ifStatement");
+    }
+
     void parseWhile() {
         printNonTerminal("whileStatement");
         expectPeek(TokenType.WHILE);
