@@ -163,11 +163,31 @@ public class Parser {
             break;
           case IDENT:
             expectPeek(TokenType.IDENT);
+            if (peekTokenIs(TokenType.LPAREN) || peekTokenIs(TokenType.DOT)) {
+                    parseSubroutineCall();
+                } else { // variavel comum ou array
+                    if (peekTokenIs(TokenType.LBRACKET)) { // array
+                        expectPeek(TokenType.LBRACKET);
+                        parseExpression();
+
+                        expectPeek(TokenType.RBRACKET);// push the value of the address pointer back onto stack
+                    }
+                }
+            break;
+        case LPAREN:
+            expectPeek(TokenType.LPAREN);
+            parseExpression();
+            expectPeek(TokenType.RPAREN);
+            break;
+        case MINUS:
+        case NOT:
+            expectPeek(TokenType.MINUS, TokenType.NOT);
+            parseTerm();
             break;
           default:
             throw error(peekToken, "term expected");
         }
-    
+
         printNonTerminal("/term");
       }
 
@@ -274,16 +294,12 @@ public class Parser {
     void parseSubroutineDec() {
         printNonTerminal("subroutineDec");
 
-        // ifLabelNum = 0;
-        // whileLabelNum = 0;
-
-        // symbolTable.startSubroutine();
 
         expectPeek(TokenType.CONSTRUCTOR, TokenType.FUNCTION, TokenType.METHOD);
         var subroutineType = currentToken.type;
 
         if (subroutineType == TokenType.METHOD) {
-            //symbolTable.define("this", className, Kind.ARG);
+
         }
 
         // 'int' | 'char' | 'boolean' | className
@@ -303,26 +319,23 @@ public class Parser {
     void parseParameterList() {
         printNonTerminal("parameterList");
 
-        //SymbolTable.Kind kind = Kind.ARG;
+    
 
         if (!peekTokenIs(TokenType.RPAREN)) // verifica se tem pelo menos uma expressao
         {
             expectPeek(TokenType.INT, TokenType.CHAR, TokenType.BOOLEAN, TokenType.IDENT);
-            //String type = currentToken.value();
+          
 
             expectPeek(TokenType.IDENT);
-            //String name = currentToken.value();
-            //symbolTable.define(name, type, kind);
+ 
 
             while (peekTokenIs(TokenType.COMMA)) {
                 expectPeek(TokenType.COMMA);
                 expectPeek(TokenType.INT, TokenType.CHAR, TokenType.BOOLEAN, TokenType.IDENT);
-                //type = currentToken.value();
+
 
                 expectPeek(TokenType.IDENT);
-                //name = currentToken.value();
-
-                //symbolTable.define(name, type, kind);
+ 
             }
 
         }
@@ -337,20 +350,7 @@ public class Parser {
         while (peekTokenIs(TokenType.VAR)) {
             parseVarDec();
         }
-        //var nlocals = symbolTable.varCount(Kind.VAR);
-
-        //vmWriter.writeFunction(functionName, nlocals);
-
-        // if (subroutineType == CONSTRUCTOR) {
-        //     vmWriter.writePush(Segment.CONST, symbolTable.varCount(Kind.FIELD));
-        //     vmWriter.writeCall("Memory.alloc", 1);
-        //     vmWriter.writePop(Segment.POINTER, 0);
-        // }
-
-        // if (subroutineType == METHOD) {
-        //     vmWriter.writePush(Segment.ARG, 0);
-        //     vmWriter.writePop(Segment.POINTER, 0);
-        // }
+        
 
         parseStatements();
         expectPeek(TokenType.RBRACE);
@@ -361,23 +361,20 @@ public class Parser {
         printNonTerminal("varDec");
         expectPeek(TokenType.VAR);
 
-        //SymbolTable.Kind kind = Kind.VAR;
+        
 
         // 'int' | 'char' | 'boolean' | className
         expectPeek(TokenType.INT, TokenType.CHAR, TokenType.BOOLEAN, TokenType.IDENT);
         
-        //String type = currentToken.value();
+        
 
         expectPeek(TokenType.IDENT);
-        //String name = currentToken.value();
-        //symbolTable.define(name, type, kind);
+       
 
         while (peekTokenIs(TokenType.COMMA)) {
             expectPeek(TokenType.COMMA);
             expectPeek(TokenType.IDENT);
 
-            //name = currentToken.value();
-            //symbolTable.define(name, type, kind);
 
         }
 
