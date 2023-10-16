@@ -1,5 +1,7 @@
 package br.ufma.ecp;
 
+import javax.swing.text.Segment;
+
 import br.ufma.ecp.token.Token;
 import br.ufma.ecp.token.TokenType;
 
@@ -70,6 +72,7 @@ public class Parser {
         printNonTerminal("statements");
         while ( peekToken.type == TokenType.LET ||
                 peekToken.type == TokenType.RETURN ||
+                peekToken.type == TokenType.DO ||
                 peekToken.type == TokenType.WHILE ||
                 peekToken.type == TokenType.IF) {
             parseStatement();
@@ -92,9 +95,21 @@ public class Parser {
             case IF:
                 parseIf();
                 break;
+            case DO:
+                parseDo();
+                break;
             default:
                 throw error(peekToken, "Expected a statement");
         }
+    }
+    void parseDo() {
+        printNonTerminal("doStatement");
+        expectPeek(TokenType.DO);
+        expectPeek(TokenType.IDENT);
+        parseSubroutineCall();
+        expectPeek(TokenType.SEMICOLON);
+
+        printNonTerminal("/doStatement");
     }
 
     void parseReturn() {
@@ -188,6 +203,30 @@ public class Parser {
         printNonTerminal("/letStatement");
     }
 
+    void parseSubroutineCall() {
+
+        var nArgs = 0;
+
+
+        if (peekTokenIs(TokenType.LPAREN)) { // método da propria classe
+            expectPeek(TokenType.LPAREN);
+ 
+            nArgs = parseExpressionList() + 1;
+            expectPeek(TokenType.RPAREN);
+
+        } else {
+            // pode ser um metodo de um outro objeto ou uma função
+            expectPeek(TokenType.DOT);
+            expectPeek(TokenType.IDENT); // nome da função
+
+            expectPeek(TokenType.LPAREN);
+            nArgs += parseExpressionList();
+
+            expectPeek(TokenType.RPAREN);
+        }
+
+        
+    }
     // funções auxiliares
     public String XMLOutput() {
         return xmlOutput.toString();
