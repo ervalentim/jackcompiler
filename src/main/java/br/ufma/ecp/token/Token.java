@@ -42,4 +42,8 @@ public class Token {
 
     }
     
+    public String value () {
+        return type.value;
+    }
+    
 }

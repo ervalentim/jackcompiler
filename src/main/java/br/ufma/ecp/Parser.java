@@ -13,6 +13,7 @@ public class Parser {
     private Token currentToken;
     private Token peekToken;
     private StringBuilder xmlOutput = new StringBuilder();
+    private String className;
 
     public Parser(byte[] input) {
         scan = new Scanner(input);
@@ -25,8 +26,28 @@ public class Parser {
     }
 
 
-   public void parse () {
-        
+    void parse() {
+        parseClass();
+    }
+
+    void parseClass() {
+        printNonTerminal("class");
+        expectPeek(TokenType.CLASS);
+        expectPeek(TokenType.IDENT);
+        className = currentToken.value();
+        expectPeek(TokenType.LBRACE);
+
+        while (peekTokenIs(TokenType.STATIC) || peekTokenIs(TokenType.FIELD)) {
+            parseClassVarDec();
+        }
+
+        while (peekTokenIs(TokenType.FUNCTION) || peekTokenIs(TokenType.CONSTRUCTOR) || peekTokenIs(TokenType.METHOD)) {
+            parseSubroutineDec();
+        }
+
+        expectPeek(TokenType.RBRACE);
+
+        printNonTerminal("/class");
     }
 
     void parseIf() {
@@ -249,6 +270,121 @@ public class Parser {
         expectPeek(TokenType.SEMICOLON);
         printNonTerminal("/classVarDec");
     }
+
+    void parseSubroutineDec() {
+        printNonTerminal("subroutineDec");
+
+        // ifLabelNum = 0;
+        // whileLabelNum = 0;
+
+        // symbolTable.startSubroutine();
+
+        expectPeek(TokenType.CONSTRUCTOR, TokenType.FUNCTION, TokenType.METHOD);
+        var subroutineType = currentToken.type;
+
+        if (subroutineType == TokenType.METHOD) {
+            //symbolTable.define("this", className, Kind.ARG);
+        }
+
+        // 'int' | 'char' | 'boolean' | className
+        expectPeek(TokenType.VOID, TokenType.INT, TokenType.CHAR, TokenType.BOOLEAN, TokenType.IDENT);
+        expectPeek(TokenType.IDENT);
+
+        var functionName = className + "." + currentToken.value();
+
+        expectPeek(TokenType.LPAREN);
+        parseParameterList();
+        expectPeek(TokenType.RPAREN);
+        parseSubroutineBody(functionName, subroutineType);
+
+        printNonTerminal("/subroutineDec");
+    }
+
+    void parseParameterList() {
+        printNonTerminal("parameterList");
+
+        //SymbolTable.Kind kind = Kind.ARG;
+
+        if (!peekTokenIs(TokenType.RPAREN)) // verifica se tem pelo menos uma expressao
+        {
+            expectPeek(TokenType.INT, TokenType.CHAR, TokenType.BOOLEAN, TokenType.IDENT);
+            //String type = currentToken.value();
+
+            expectPeek(TokenType.IDENT);
+            //String name = currentToken.value();
+            //symbolTable.define(name, type, kind);
+
+            while (peekTokenIs(TokenType.COMMA)) {
+                expectPeek(TokenType.COMMA);
+                expectPeek(TokenType.INT, TokenType.CHAR, TokenType.BOOLEAN, TokenType.IDENT);
+                //type = currentToken.value();
+
+                expectPeek(TokenType.IDENT);
+                //name = currentToken.value();
+
+                //symbolTable.define(name, type, kind);
+            }
+
+        }
+
+        printNonTerminal("/parameterList");
+    }
+
+    void parseSubroutineBody(String functionName, TokenType subroutineType) {
+
+        printNonTerminal("subroutineBody");
+        expectPeek(TokenType.LBRACE);
+        while (peekTokenIs(TokenType.VAR)) {
+            parseVarDec();
+        }
+        //var nlocals = symbolTable.varCount(Kind.VAR);
+
+        //vmWriter.writeFunction(functionName, nlocals);
+
+        // if (subroutineType == CONSTRUCTOR) {
+        //     vmWriter.writePush(Segment.CONST, symbolTable.varCount(Kind.FIELD));
+        //     vmWriter.writeCall("Memory.alloc", 1);
+        //     vmWriter.writePop(Segment.POINTER, 0);
+        // }
+
+        // if (subroutineType == METHOD) {
+        //     vmWriter.writePush(Segment.ARG, 0);
+        //     vmWriter.writePop(Segment.POINTER, 0);
+        // }
+
+        parseStatements();
+        expectPeek(TokenType.RBRACE);
+        printNonTerminal("/subroutineBody");
+    }
+
+    void parseVarDec() {
+        printNonTerminal("varDec");
+        expectPeek(TokenType.VAR);
+
+        //SymbolTable.Kind kind = Kind.VAR;
+
+        // 'int' | 'char' | 'boolean' | className
+        expectPeek(TokenType.INT, TokenType.CHAR, TokenType.BOOLEAN, TokenType.IDENT);
+        
+        //String type = currentToken.value();
+
+        expectPeek(TokenType.IDENT);
+        //String name = currentToken.value();
+        //symbolTable.define(name, type, kind);
+
+        while (peekTokenIs(TokenType.COMMA)) {
+            expectPeek(TokenType.COMMA);
+            expectPeek(TokenType.IDENT);
+
+            //name = currentToken.value();
+            //symbolTable.define(name, type, kind);
+
+        }
+
+        expectPeek(TokenType.SEMICOLON);
+        printNonTerminal("/varDec");
+    }
+
     // funções auxiliares
     public String XMLOutput() {
         return xmlOutput.toString();

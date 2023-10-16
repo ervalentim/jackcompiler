@@ -63,5 +63,13 @@ public enum TokenType {
             );
             return keywords.contains(type);
     }
+    private TokenType() {
+    }
+
+    private TokenType(String value) {
+        this.value = value;
+    }
+
+    public String value;
 
 }
