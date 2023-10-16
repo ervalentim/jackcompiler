@@ -231,24 +231,19 @@ public class Parser {
         printNonTerminal("classVarDec");
         expectPeek(TokenType.FIELD, TokenType.STATIC);
 
-        // SymbolTable.Kind kind = Kind.STATIC;
-        // if (currentTokenIs(TokenType.FIELD))
-        //     kind = Kind.FIELD;
+        
 
         // 'int' | 'char' | 'boolean' | className
         expectPeek(TokenType.INT, TokenType.CHAR, TokenType.BOOLEAN, TokenType.IDENT);
-        //String type = currentToken.value();
+        
 
         expectPeek(TokenType.IDENT);
-        //String name = currentToken.value();
-
-        //symbolTable.define(name, type, kind);
+        
         while (peekTokenIs(TokenType.COMMA)) {
             expectPeek(TokenType.COMMA);
             expectPeek(TokenType.IDENT);
 
-            // name = currentToken.value();
-            // symbolTable.define(name, type, kind);
+ 
         }
 
         expectPeek(TokenType.SEMICOLON);
