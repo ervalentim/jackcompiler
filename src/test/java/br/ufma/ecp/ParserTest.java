@@ -11,7 +11,7 @@ public class ParserTest extends TestSupport {
 
     @Test
     public void testParseTermInteger () {
-      var input = "10;";
+      var input = "10";
       var parser = new Parser(input.getBytes(StandardCharsets.UTF_8));
       parser.parseTerm();
       var expectedResult =  """
@@ -666,7 +666,7 @@ public class ParserTest extends TestSupport {
     @Test
     public void testInt () {
         var input = """
-            10;
+            10
             """;
         
         var parser = new Parser(input.getBytes(StandardCharsets.UTF_8));
