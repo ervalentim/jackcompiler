@@ -1,6 +1,7 @@
 package br.ufma.ecp;
 
-import javax.swing.text.Segment;
+import br.ufma.ecp.VMWriter.Command;
+import br.ufma.ecp.VMWriter.Segment;
 
 import br.ufma.ecp.token.Token;
 import br.ufma.ecp.token.TokenType;
@@ -14,6 +15,7 @@ public class Parser {
     private Token peekToken;
     private StringBuilder xmlOutput = new StringBuilder();
     private String className;
+    private VMWriter vmWriter = new VMWriter();
 
     public Parser(byte[] input) {
         scan = new Scanner(input);
@@ -149,6 +151,7 @@ public class Parser {
         switch (peekToken.type) {
           case NUMBER:
             expectPeek(TokenType.NUMBER);
+            vmWriter.writePush(Segment.CONST, Integer.parseInt(currentToken.lexeme));
             break;
           case STRING:
             expectPeek(TokenType.STRING);
@@ -195,15 +198,16 @@ public class Parser {
         return "+-*/<>=~&|".contains(op);
    }
 
-    void parseExpression() {
-        printNonTerminal("expression");
-        parseTerm ();
-        while (isOperator(peekToken.lexeme)) {
-            expectPeek(peekToken.type);
-            parseTerm();
-        }
-        printNonTerminal("/expression");
+   void parseExpression() {
+    printNonTerminal("expression");
+    parseTerm ();
+    while (isOperator(peekToken.lexeme)) {
+        expectPeek(peekToken.type);
+        parseTerm();
     }
+    printNonTerminal("/expression");
+}
+   
 
     int parseExpressionList() {
         printNonTerminal("expressionList");
@@ -437,6 +441,9 @@ public class Parser {
         }
         return new ParseError();
     }
+    public String VMOutput() {
+        return vmWriter.vmOutput();
+}
 
 
 }

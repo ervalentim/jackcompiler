@@ -1,5 +1,7 @@
 package br.ufma.ecp.token;
+import static org.junit.Assert.assertEquals;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -43,11 +45,9 @@ public enum TokenType {
 
      ILLEGAL;
 
-    static public boolean isSymbol (char c) {
-        String symbols = "{}()[].,;+-*/&|<>=~";
-        return symbols.indexOf(c) > -1;
+     private TokenType() {
     }
-
+    public String value;
 
     static public boolean isKeyword (TokenType type) {
         List<TokenType> keywords  = 
@@ -63,13 +63,20 @@ public enum TokenType {
             );
             return keywords.contains(type);
     }
-    private TokenType() {
-    }
+   
 
     private TokenType(String value) {
         this.value = value;
     }
+    
+    static public boolean isSymbol (char c) {
+        String symbols = "{}()[].,;+-*/&|<>=~";
+        return symbols.indexOf(c) > -1;
+    }
 
-    public String value;
+   
+    static public boolean isOperator(TokenType type) {
+        return "+-*/<>=~&|".contains(type.value);
+    }
 
 }
