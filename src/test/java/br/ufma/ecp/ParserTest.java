@@ -863,4 +863,28 @@ public class ParserTest extends TestSupport {
             assertEquals(expected, actual);
     }
 
+    @Test
+    public void testWhile () {
+        var input = """
+            while (false) {
+                return 10;
+            } 
+            """;
+        
+        var parser = new Parser(input.getBytes(StandardCharsets.UTF_8));
+        parser.parseStatement();
+        String actual = parser.VMOutput();
+        String expected = """
+            label WHILE_EXP0
+            push constant 0
+            not
+            if-goto WHILE_END0
+            push constant 10
+            return
+            goto WHILE_EXP0
+            label WHILE_END0
+                    """;
+            assertEquals(expected, actual);
+    }
+
 }
