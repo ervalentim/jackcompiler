@@ -834,4 +834,33 @@ public class ParserTest extends TestSupport {
             assertEquals(expected, actual);
     }
 
+    @Test
+    public void testIf () {
+        var input = """
+            if (false) {
+                return 10;
+            } else {
+                return 20;
+            }
+            """;
+        
+        var parser = new Parser(input.getBytes(StandardCharsets.UTF_8));
+        parser.parseStatement();
+        String actual = parser.VMOutput();
+        String expected = """
+            push constant 0
+            if-goto IF_TRUE0
+            goto IF_FALSE0
+            label IF_TRUE0
+            push constant 10
+            return
+            goto IF_END0
+            label IF_FALSE0
+            push constant 20
+            return
+            label IF_END0 
+                    """;
+            assertEquals(expected, actual);
+    }
+
 }
