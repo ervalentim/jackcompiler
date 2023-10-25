@@ -79,4 +79,5 @@ public enum TokenType {
         return "+-*/<>=~&|".contains(type.value);
     }
 
+
 }
