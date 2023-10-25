@@ -59,6 +59,7 @@ public class SymbolTableTest {
                 """;
         assertEquals(expected, actual);
     }
+
     @Test
     public void testSimpleFunctionWithVar () {
         var input = """
@@ -81,4 +82,5 @@ public class SymbolTableTest {
             """;
         assertEquals(expected, actual);
     }
+    
 }

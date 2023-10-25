@@ -215,16 +215,20 @@ public class Parser {
                 expectPeek(TokenType.THIS);
                 vmWriter.writePush(Segment.POINTER, 0);
                 break;
-            case IDENT:
+                case IDENT:
                 expectPeek(TokenType.IDENT);
+
+                Symbol sym = symTable.resolve(currentToken.lexeme);
+                
                 if (peekTokenIs(TokenType.LPAREN) || peekTokenIs(TokenType.DOT)) {
                     parseSubroutineCall();
-                } else { // variavel comum ou array
-                    if (peekTokenIs(TokenType.LBRACKET)) { // array
+                } else { 
+                    if (peekTokenIs(TokenType.LBRACKET)) { 
                         expectPeek(TokenType.LBRACKET);
-                        parseExpression();
-
-                        expectPeek(TokenType.RBRACKET);// push the value of the address pointer back onto stack
+                        parseExpression();                        
+                        expectPeek(TokenType.RBRACKET);                       
+                    } else {
+                        vmWriter.writePush(kind2Segment(sym.kind()), sym.index());
                     }
                 }
                 break;
@@ -527,6 +531,8 @@ public class Parser {
     }
 
     private Command typeOperator(TokenType type) {
+
+
         if (type == TokenType.PLUS)
             return Command.ADD;
         if (type == TokenType.MINUS)
@@ -541,6 +547,18 @@ public class Parser {
             return Command.AND;
         if (type == TokenType.OR)
             return Command.OR;
+        return null;
+    }
+
+    private Segment kind2Segment(Kind kind) {
+        if (kind == Kind.STATIC)
+            return Segment.STATIC;
+        if (kind == Kind.FIELD)
+            return Segment.THIS;
+        if (kind == Kind.VAR)
+            return Segment.LOCAL;
+        if (kind == Kind.ARG)
+            return Segment.ARG;
         return null;
     }
 }
