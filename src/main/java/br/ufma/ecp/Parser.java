@@ -343,22 +343,36 @@ public class Parser {
 
         var nArgs = 0;
 
+        var ident = currentToken.lexeme;
+        var symbol = symTable.resolve(ident); 
+        var functionName = ident + ".";
+
         if (peekTokenIs(TokenType.LPAREN)) { // método da propria classe
             expectPeek(TokenType.LPAREN);
-
+            vmWriter.writePush(Segment.POINTER, 0);
             nArgs = parseExpressionList() + 1;
             expectPeek(TokenType.RPAREN);
+            functionName = className + "." + ident;
 
         } else {
             // pode ser um metodo de um outro objeto ou uma função
             expectPeek(TokenType.DOT);
-            expectPeek(TokenType.IDENT); // nome da função
+            expectPeek(TokenType.IDENT);
+            
+            if (symbol != null) { 
+                functionName = symbol.type() + "." + currentToken.lexeme;
+                vmWriter.writePush(kind2Segment(symbol.kind()), symbol.index());
+                nArgs = 1;
+            } else {
+                functionName += currentToken.lexeme; 
+            }
 
             expectPeek(TokenType.LPAREN);
             nArgs += parseExpressionList();
 
             expectPeek(TokenType.RPAREN);
         }
+        vmWriter.writeCall(functionName, nArgs);
 
     }
 
